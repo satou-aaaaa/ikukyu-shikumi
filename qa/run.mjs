@@ -73,6 +73,8 @@ function resolve(P) {
   check("問題：種類は21（やさしい6・ふつう9・むずかしい6）", G.KINDS.length === 21 && [0, 1, 2].map((l) => G.kindsOf(l).length).join() === "6,9,6", [0, 1, 2].map((l) => G.kindsOf(l).length).join());
   const longWhy = [], longLook = [], longOpt = [];
   for (const k of G.KINDS) { if ([...k.why].length > 130) longWhy.push(k.id); if ([...k.look].length > 45 || [...k.key].length > 70) longLook.push(k.id); for (let s = 0; s < 200; s++) { const P = G.make(`${k.id}|len${s}`); for (const o of P.opts) if ([...o].length > 30) longOpt.push(`${k.id}:${o}`); if ([...P.q].length > 90) longOpt.push(`${k.id}:${P.q}`); } }
+  { const ng = []; for (let i = 0; i < 200; i++) { const P = G.make(`ichigetsu|wy${i}`); if (!(P.why + P.key).includes(P.ans)) ng.push(P.ans); }
+    check("問いの分かれ道ごとに、説明（なぜ・要点）が正解と合う（延長の申出は2週間前の説明。CodeRabbit ikukyu-shikumi#1）", ng.length === 0, ng.slice(0, 3).join()); }
   check("説明は130字以内・ヒントは45字・70字以内・選び肢は30字以内・問いは90字以内（やさしい日本語。一文を短く）", !longWhy.length && !longLook.length && !longOpt.length, longWhy.concat(longLook, longOpt.slice(0, 3)).join(","));
   check("出典は e-Gov 法令検索の条文だけ（育児・介護休業法・同法施行規則）", Object.values(G.SRC).every(([n, u]) => /^育児・介護休業法/.test(n) && /^https:\/\/laws\.e-gov\.go\.jp\/law\/(403AC0000000076|403M50002000025)$/.test(u)));
   { const all = []; for (const k of G.KINDS) { all.push(k.why, k.look, k.key, k.name); for (let i = 0; i < 100; i++) { const P = G.make(`${k.id}|nz${i}`); all.push(P.q, ...P.opts); } }
